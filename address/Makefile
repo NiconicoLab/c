@@ -1,18 +1,17 @@
-CC = gcc
-
-TARGET = $@
-SOURCE = $@.c
+CC = gcc-10
+CCFLAGS = -Wall -O
 
 all: main
 
 clean:
 	rm -rf main *.o *~
 
-OBJS = main.o 
-main: $(OBJS) 
+OBJS1 = main.o 
 
-TARGET:
-	$(CC) -o $(TARGET) $(SOURCE)
+main:$(OBJS1) 
+	$(CC) $(CCFLAGS) -o $@ $(OBJS1)
+
+.c.o:
+	$(CC) $(CCFLAGS) $(INCLUDE) -c -o $@ $<
 
 main.o: main.c
-
