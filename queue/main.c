@@ -8,6 +8,7 @@ typedef struct {
 	int array[MAX_QUEUE_SIZE]; // データを格納する配列
 	unsigned int head;
         unsigned int tail;
+	unsigned int num;
 } QUEUE_BUF;
 
 void init_queue(QUEUE_BUF* queue)
@@ -18,6 +19,7 @@ void init_queue(QUEUE_BUF* queue)
 	}
 	queue->head = 0;
 	queue->tail = 0;
+	queue->num  = 0;
 }
 
 int enqueue(QUEUE_BUF* queue, int val)
@@ -25,10 +27,15 @@ int enqueue(QUEUE_BUF* queue, int val)
 	int ret = RET_NG;
 
 	// 配列に空き容量がある場合は格納
-	if(queue->tail < MAX_QUEUE_SIZE)
+	if(queue->num < MAX_QUEUE_SIZE)
 	{
+		if(queue->tail == MAX_QUEUE_SIZE)
+		{
+			queue->tail = 0;
+		}
 		queue->array[queue->tail] = val;
 		queue->tail++;
+		queue->num++;
 		ret = RET_OK;
 		printf("enqueue : %d\n", val);
 	}
@@ -41,10 +48,15 @@ int dequeue(QUEUE_BUF* queue, int* val)
 	int ret = RET_NG;
 
 	// 格納されたデータがある場合
-	if(queue->head != queue->tail)
+	if(queue->num > 0)
 	{
+		if(queue->head == MAX_QUEUE_SIZE)
+		{
+			queue->head = 0;
+		}
 		*val = queue->array[queue->head];
 		queue->head++;
+		queue->num--;
 		ret = RET_OK;
 	}
 
@@ -65,8 +77,36 @@ int main(int argc, char *argv[])
 	int val;
 	for(int i = 0; i < 5; i++)
 	{
-		dequeue(&queue, &val);
-		printf("dequeue : %d\n", val);
+		if(dequeue(&queue, &val) == RET_OK)
+		{
+			printf("dequeue : %d\n", val);
+		}
+	}
+
+	for(int i = 0; i < 1; i++)
+	{
+		enqueue(&queue, i+10);
+	}
+
+	for(int i = 0; i < 1; i++)
+	{
+		if(dequeue(&queue, &val) == RET_OK)
+		{
+			printf("dequeue : %d\n", val);
+		}
+	}
+
+	for(int i = 0; i < 5; i++)
+	{
+		enqueue(&queue, i+20);
+	}
+
+	for(int i = 0; i < 5; i++)
+	{
+		if(dequeue(&queue, &val) == RET_OK)
+		{
+			printf("dequeue : %d\n", val);
+		}
 	}
 	
 	return 0;
