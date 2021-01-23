@@ -1,0 +1,15 @@
+送受信プログラムをClient/Serverのプログラムへ書き換える時の注意点
+
+・Client
+(1)ソケット生成            socket()
+(2)ソケット接続要求         connect()
+(3)受信/送信              recv()/send()
+(4)ソケット切断            close()
+
+・Server
+(1)ソケット生成            socket()
+(2)ソケット登録            bind()	
+(3)ソケット接続準備         listen()	
+(4)ソケット接続待機(接続要求) accept()	
+(5)受信/送信              recv()/send()	
+(6)ソケット切断            close()	
