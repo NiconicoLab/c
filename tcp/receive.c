@@ -8,6 +8,8 @@
 #include <errno.h>
 #include <unistd.h>
 
+#define TIMEOUT_ENABLE // タイムアウト付き
+
 int main()
 {
 	int sd;
@@ -27,6 +29,16 @@ int main()
 	addr.sin_port = htons(12345);
 	addr.sin_addr.s_addr = INADDR_ANY;
 
+#ifdef TIMEOUT_ENABLE
+	fd_set fds, rfds;
+	FD_ZERO(&rfds);
+	FD_SET(sd, &rfds);
+
+	struct timeval tv;
+	tv.tv_sec  = 5;
+	tv.tv_usec = 0;
+#endif
+
 	if(bind(sd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
 		perror("bind");
 		return -1;
@@ -40,28 +52,49 @@ int main()
 
 	unsigned char cnt = 0;
 	while(cnt < 5){		
-		// クライアントからコネクト要求が来るまで停止し，サーバはacc_sd を使ってパケットの送受信
+#ifdef TIMEOUT_ENABLE
+		memcpy(&fds, &rfds, sizeof(fd_set)); // selectが毎回上書きするため初期化
+		int judge = select(sd+1, &fds, NULL, NULL, &tv);
+		if(judge < 0) {
+			printf("error select\n");
+		}
+		else if(judge == 0) {
+			printf("timeout\n");
+			cnt++;
+			continue;
+		}
+#endif
+
+		// クライアントからコネクト要求が来るまで停止し，サーバはacc_sdを使ってパケットの送受信
 		if((acc_sd = accept(sd, (struct sockaddr *)&from_addr, &sin_size)) < 0) {
 			perror("accept");
 			return -1;
 		}
 		
-		int num = recv(acc_sd, buf, sizeof(buf), 0);
-		if(num < 0) {
-			perror("recv");
-			return -1;
-		}
+#ifdef TIMEOUT_ENABLE
+		if(FD_ISSET(sd, &fds)) // データがある場合
+		{
+#endif
 		
-		for(int i = 0; i < num; i++) {
-			printf("%c", buf[i]);
+			int num = recv(acc_sd, buf, sizeof(buf), 0);
+			if(num < 0) {
+				perror("recv");
+				return -1;
+			}
+		
+			for(int i = 0; i < num; i++) {
+				printf("%c", buf[i]);
+			}
+			printf("\n");
+			cnt++;
+#ifdef TIMEOUT_ENABLE
 		}
-		printf("\n");
-		cnt++;
+#endif
 	}
 
 	// パケット送受信用ソケットのクローズ
 	close(acc_sd);
-	
+
 	// 接続要求待ち受け用ソケットをクローズ
 	close(sd);
 
