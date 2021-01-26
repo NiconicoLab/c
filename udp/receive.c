@@ -9,12 +9,12 @@
 #include <errno.h>
 #include <unistd.h>
 
+#define TIMEOUT_ENABLE // タイムアウト付き
+
 int main()
 {
 	int sock;
 	struct sockaddr_in addr;
-
-	char buf[2048];
 
 	sock = socket(AF_INET, SOCK_DGRAM, 0);
 
@@ -25,12 +25,45 @@ int main()
 
 	bind(sock, (struct sockaddr *)&addr, sizeof(addr));
 
-	memset(buf, 0, sizeof(buf));
-	recv(sock, buf, sizeof(buf), 0);
+#ifdef TIMEOUT_ENABLE
+	fd_set fds, rfds;
+	FD_ZERO(&rfds);
+	FD_SET(sock, &rfds);
 
-	printf("%s\n", buf);
+	struct timeval tv;
+	tv.tv_sec  = 5;
+	tv.tv_usec = 0;
+#endif
 
+	char buf[2048];
+	int cnt = 0;
+	while(cnt < 5)
+	{
+#ifdef TIMEOUT_ENABLE
+		memcpy(&fds, &rfds, sizeof(fd_set)); // selectが毎回上書きするため初期化
+		int judge = select(sock+1, &fds, NULL, NULL, &tv);
+		if(judge < 0) {
+			printf("error select\n");
+		}
+		else if(judge == 0) {
+			printf("timeout\n");
+			cnt++;
+			continue;
+		}
+
+		if(FD_ISSET(sock, &fds)) // データがある場合
+		{
+#endif
+			memset(buf, 0, sizeof(buf));
+			recv(sock, buf, sizeof(buf), 0);
+			printf("%s\n", buf);
+			cnt++;
+#ifdef TIMEOUT_ENABLE
+		}
+#endif
+	}
 	close(sock);
 
 	return 0;
 }
+
