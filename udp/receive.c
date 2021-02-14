@@ -10,6 +10,7 @@
 #include <unistd.h>
 
 #define TIMEOUT_ENABLE // タイムアウト付き
+#define LOOP_CNT (5)   // ループする受信回数
 
 int main()
 {
@@ -37,7 +38,7 @@ int main()
 
 	char buf[2048];
 	int cnt = 0;
-	while(cnt < 5)
+	while(cnt < LOOP_CNT)
 	{
 #ifdef TIMEOUT_ENABLE
 		memcpy(&fds, &rfds, sizeof(fd_set)); // selectが毎回上書きするため初期化
