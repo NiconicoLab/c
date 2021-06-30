@@ -26,7 +26,7 @@ int main(void)
 	printf("%d\n", minus(6, 3));
 
 	printf("--- typedef test ---\n");
-    FP_FUNC pfunc2 = NULL;
+	FP_FUNC pfunc2 = NULL;
 	pfunc2 = add;
 	printf("%d\n", pfunc2(1, 10));
 
