@@ -1,4 +1,4 @@
-CC = gcc-10
+CC = gcc-11
 CCFLAGS = -Wall -O
 
 all: send receive
