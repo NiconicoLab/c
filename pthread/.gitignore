@@ -1,3 +1,7 @@
 main
+main2
+main3
 main.o
+main2.o
+main3.o
 .DS_Store
