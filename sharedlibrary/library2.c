@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "library1.h"
+#include "library2.h"
 
 // UnixやLinuxのC言語で共有ライブラリ(.so)を作成
 
