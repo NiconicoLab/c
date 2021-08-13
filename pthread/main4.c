@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 		if(pthread_create(&thread_id[i], NULL, thread, (void *)&thread_id[i]) < 0) {
 			perror("pthread_create error");
 			exit(1);
-		}        
+		}
 	}
 
 	// 5秒後にpthread_cond_broadcast()で全スレッドに対して通知
@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
 		if(pthread_join(thread_id[i], NULL) < 0) {
 			perror("pthread_join error");
 			exit(1);
-		}        
+		}
 	}
 	printf("g_cnt = %d\n", g_cnt);
 	return 0;
