@@ -5,7 +5,7 @@ all: main main2
 
 .PHONY: clean
 clean:
-	rm -rf main *.so *.o *~
+	rm -rf main main2 *.so *.o *~
 
 OBJS1 = main.o 
 main:$(OBJS1) 
