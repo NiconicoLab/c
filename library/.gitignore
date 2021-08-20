@@ -1,0 +1,4 @@
+main
+main.o
+*.so
+.DS_Store
