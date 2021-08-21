@@ -1,7 +1,10 @@
 CC = gcc-11
 CCFLAGS = -Wall -O
 
-all: library1.so library2.so  main main2
+all: lib main main2
+
+.PHONY: lib
+lib: library1.so library2.so
 
 .PHONY: clean
 clean:
