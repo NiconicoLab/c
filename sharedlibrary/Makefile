@@ -1,6 +1,9 @@
 CC = gcc-11
 CCFLAGS = -Wall -O
 
+# -Lでリンク時のライブラリ名 -Iでライブラリ名
+LDFLAGS = -L./ -I./
+
 all: lib main main2
 
 .PHONY: lib
@@ -18,10 +21,12 @@ OBJLIB2 = library2.o
 library2.so:$(OBJLIB2)
 	$(CC) $(CCFLAGS) -shared $< -o $@
 
+# libhoge.soが存在する時-lhogeオプションでリンク
+# library1.soの場合は-lrary1となる
 OBJS1 = main.o 
 main:$(OBJS1) 
-	$(CC) $(CCFLAGS) -I./ $< -o $@ ./library1.so
+	$(CC) $(CCFLAGS) $(LDFLAGS) $< -o $@ -lrary1
 
 OBJS2 = main2.o 
 main2:$(OBJS2) 
-	$(CC) $(CCFLAGS) -I./ $< -o $@ ./library1.so ./library2.so
+	$(CC) $(CCFLAGS) $(LDFLAGS) $< -o $@ -lrary1 -lrary2
