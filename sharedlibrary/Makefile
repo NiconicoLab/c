@@ -1,15 +1,18 @@
 CC = gcc-11
 CCFLAGS = -Wall -O
 
-all: main main2
+all: library1.so main main2
 
 .PHONY: clean
 clean:
 	rm -rf main main2 *.so *.o *~
 
+OBJLIB1 = library1.o
+library1.so:$(OBJLIB1)
+	$(CC) $(CCFLAGS) -shared $< -o $@
+
 OBJS1 = main.o 
 main:$(OBJS1) 
-	$(CC) $(CCFLAGS) -shared library1.c -o library1.so
 	$(CC) $(CCFLAGS) -I./ $< -o $@ ./library1.so
 
 OBJS2 = main2.o 
