@@ -21,7 +21,9 @@
  Makefileとは名を使う場合(※シンボリックリンクは張らない)は
  下記のように指定することでできる
  $ make -f Makefile2
- この例はmake allと同じのため，cleanなど別ルールを実行する時は
+ この例はmakeの場合は1番最初にあるルールが実行されるため
+ allが1番最初に記載されているMakefileの場合はmake allと同じになる．
+ cleanなど別ルールを実行する時は
  $ make -f Makefile2 clean
  のようにする
 
