@@ -17,6 +17,11 @@
  オブジェクトファイルから実行ファイルを作成する時は下記のように行う
  $ gcc main.o -o main
  
-■ 
-
+■ 任意のMakefileを使ってビルドを行う場合
+ Makefileとは名を使う場合(※シンボリックリンクは張らない)は
+ 下記のように指定することでできる
+ $ make -f Makefile2
+ この例はmake allと同じのため，cleanなど別ルールを実行する時は
+ $ make -f Makefile2 clean
+ のようにする
 
