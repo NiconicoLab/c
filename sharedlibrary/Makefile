@@ -30,3 +30,6 @@ main:$(OBJS1)
 OBJS2 = main2.o 
 main2:$(OBJS2) 
 	$(CC) $(CCFLAGS) $(LDFLAGS) $< -o $@ -lrary1 -lrary2
+
+.c.o:
+	$(CC) -c $<
