@@ -27,3 +27,13 @@
  $ make -f Makefile2 clean
  のようにする
 
+■ 擬似ターゲットのルール
+ cleanというファイルが存在している場合
+ makefileのルールからcleanというターゲットファイルが存在していると
+ make clean としてもcleanというターゲットは最新であるエラーが出る
+ $ make clean
+ make: `clean' is up to date.
+ これを防ぐために擬似ターゲットである.PHONY ルールを使う
+ この指定が行われたターゲットはルールが必ずコマンドが実行される
+ .PHONY: cleanのように記載する
+ 
