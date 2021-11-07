@@ -1,6 +1,8 @@
 main
 main.o
+library1.o
 main2
 main2.o
+library2.o
 *.so
 .DS_Store
