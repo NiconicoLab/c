@@ -67,6 +67,17 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
+
+	// goto文で同じことを行うためには，
+	if (!func(true))
+		goto MAINLAST;
+	if (!func(true))
+		goto MAINLAST;
+	if (!func(true))
+		goto MAINLAST;
+	printf("debug5\n");
+
+MAINLAST:
 	
 	return 0;
 }
