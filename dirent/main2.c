@@ -7,11 +7,17 @@
 #define ARRAY_NUM 100
 #define MAX_CREATE_FILE_NUM 5
 #define SERATH_PATH "./"
-#define FIX_NAME "_aaa.txt"
 #define DIGIT 3
 #define BACKUP_NAME ".bak"
 
-int get_file(char *fname_create, char *fname_delete)
+typedef enum {
+	RET_ERROR = 1,
+	RET_REPLACE,
+	RET_ONLY_CRE,
+	RET_CRE_DEL
+} ERet;
+
+ERet get_file(char *fname_create, char *fname_delete, const char* fix_name)
 {
 	DIR *dir = opendir(SERATH_PATH);
 	struct dirent *dp;
@@ -21,20 +27,14 @@ int get_file(char *fname_create, char *fname_delete)
 	printf("---------Hit File List---------\n");
 	int number[ARRAY_NUM];
 	char *e;
-	int len = strlen(FIX_NAME);
+	int len = strlen(fix_name);
 	int len2 = strlen(BACKUP_NAME);
 	bool flag = false;
 	for(dp = readdir(dir); dp != NULL; dp = readdir(dir))
 	{
 		// printf(" -> %p %s\n", dp->d_name, dp->d_name); // debug
-#if 1
-		if(0 == memcmp(&dp->d_name[DIGIT+1], FIX_NAME, len))
+		if(0 == memcmp(&dp->d_name[DIGIT+1], fix_name, len))
 		{
-#else
-		char *found = strstr(dp->d_name, FIX_NAME);
-		if(found)
-		{
-#endif
 			printf("%d : %s :", cnt, dp->d_name);
 			dp->d_name[DIGIT+1] = '\0'; // glibcではd_name[256]で定義
 			number[cnt] = strtol(dp->d_name, &e, 10);
@@ -64,14 +64,14 @@ int get_file(char *fname_create, char *fname_delete)
 
 	if(0 == cnt)
 	{
-		return -1;
+		return RET_ERROR;
 	}
 	if(true == flag)
 	{
-		sprintf(fname_delete, "%04d%s%s", number[cnt-1], FIX_NAME, BACKUP_NAME);
-		sprintf(fname_create, "%04d%s", number[cnt-1], FIX_NAME);
+		sprintf(fname_delete, "%04d%s%s", number[cnt-1], fix_name, BACKUP_NAME);
+		sprintf(fname_create, "%04d%s", number[cnt-1], fix_name);
 		printf("interrupt delete %s : create %s\n", fname_delete, fname_create);
-		return 2;
+		return RET_REPLACE;
 	}
 
 	int sum, i, j;
@@ -106,59 +106,101 @@ int get_file(char *fname_create, char *fname_delete)
 		// printf("over = %d\n", over);
 		if(over) {
 			printf("delete %04d_aaa.txt : create %04d_aaa.txt\n", number[total-over], number[total-over-1]+1);
-			sprintf(fname_delete, "%04d%s", number[total-over], FIX_NAME);
-			sprintf(fname_create, "%04d%s", number[total-over-1]+1, FIX_NAME);
+			sprintf(fname_delete, "%04d%s", number[total-over], fix_name);
+			sprintf(fname_create, "%04d%s", number[total-over-1]+1, fix_name);
 		}
 		else {
 		}
 	}
 	else {
-		printf("delete %04d%s : create %04d%s\n", number[0], FIX_NAME, number[total-1]+1, FIX_NAME);
-		sprintf(fname_delete, "%04d%s", number[0], FIX_NAME);
-		sprintf(fname_create, "%04d%s", number[total-1]+1, FIX_NAME);
+		printf("delete %04d%s : create %04d%s\n", number[0], fix_name, number[total-1]+1, fix_name);
+		sprintf(fname_delete, "%04d%s", number[0], fix_name);
+		sprintf(fname_create, "%04d%s", number[total-1]+1, fix_name);
 	}
 
 	if(total >= MAX_CREATE_FILE_NUM)
 	{
 		// printf("%d\n", total);
-		return 1;
+		return RET_CRE_DEL;
 	}
-	return 0;
+	return RET_ONLY_CRE;
 }
 
-int main(int argc, char *argv[])
+void func1(void)
 {
+	printf("---------Pattern A---------\n");
 	char fname_create[256];
 	char fname_delete[256];
-
 	bool delete_flag = false;
+	char *fix_name = "_aaa.txt";
 
-	int ret = get_file(fname_create, fname_delete); 
-	if(-1 == ret)
-	{
-		sprintf(fname_create, "%04d%s", 0, FIX_NAME);
-	}
-	else if(1 == ret)
-	{
+	ERet ret = get_file(fname_create, fname_delete, fix_name);
+	switch(ret) {
+	case RET_ERROR:
+		sprintf(fname_create, "%04d%s", 0, fix_name);
+		break;
+	case RET_REPLACE:
+		delete_flag = true;
+		break;
+	case RET_ONLY_CRE:
+		// printf("delete %s : create %s\n", fname_delete, fname_create);
+		break;
+	case RET_CRE_DEL:
 		delete_flag = true;
 		// printf("delete %s : create %s\n", fname_delete, fname_create);
-	}
-	else if(2 == ret)
-	{
-		delete_flag = true;
-	}
-	else // if(0 == ret)
-	{
-		// printf("delete %s : create %s\n", fname_delete, fname_create);
+		break;
+	default:
+		break;
 	}
 
-	printf("---------Main program---------\n");
+	printf("---------func1 program---------\n");
 	printf("create %s", fname_create);
 	if(true == delete_flag)
 	{
 		printf(" : delete %s", fname_delete);
 	}
 	printf("\n");
+}
 
+void func2(void)
+{
+	printf("---------Pattern B---------\n");
+	char fname_create[256];
+	char fname_delete[256];
+	bool delete_flag = false;
+	char *fix_name = "_aab.txt";
+
+	ERet ret = get_file(fname_create, fname_delete, fix_name);
+	switch(ret) {
+	case RET_ERROR:
+		sprintf(fname_create, "%04d%s", 0, fix_name);
+		break;
+	case RET_REPLACE:
+		delete_flag = true;
+		break;
+	case RET_ONLY_CRE:
+		// printf("delete %s : create %s\n", fname_delete, fname_create);
+		break;
+	case RET_CRE_DEL:
+		delete_flag = true;
+		// printf("delete %s : create %s\n", fname_delete, fname_create);
+		break;
+	default:
+		break;
+	}
+
+	printf("---------func2 program---------\n");
+	printf("create %s", fname_create);
+	if(true == delete_flag)
+	{
+		printf(" : delete %s", fname_delete);
+	}
+	printf("\n");
+}
+
+int main(int argc, char *argv[])
+{
+	func1();
+	func2();
 	return 0;
 }
