@@ -11,6 +11,12 @@ int main(int argc, char *argv[])
 	// スレッド生成
 	pthread_create(&tid1, NULL, thread1, NULL);
 
+	for(int i = 0; i < 5; i++)
+	{
+		fprintf(stderr, "main thread : %d\n", i);
+		usleep(500000);
+	}
+
 	// スレッド終了待ち
 	pthread_join(tid1, NULL);
 
@@ -21,10 +27,11 @@ int main(int argc, char *argv[])
 
 void* thread1(void *pParam)
 {
-	for(int i = 0; i < 100; i++)
+	for(int i = 0; i < 10; i++)
 	{
-		printf("%d\n", i);
-		usleep(100000); // 100ms
+		fprintf(stderr, "child thread : %d\n", i);
+		usleep(1000000); // 1000ms
 	}
 	pthread_exit(NULL);
+	return NULL; // ここには到達しない
 }
