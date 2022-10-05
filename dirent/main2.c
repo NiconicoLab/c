@@ -20,15 +20,7 @@ int main(int argc, char *argv[])
 
 	unsigned int cnt = 1;
 
-	printf("---------Folder File List---------\n");
-#if 0
-	for(dp = readdir(dir); dp != NULL; dp = readdir(dir))
-	{
-		printf("%d : %s\n", cnt, dp->d_name);
-		cnt++;
-	}
-	closedir(dir);
-#else
+	printf("---------Hit File List---------\n");
 	int number[100];
 	cnt = 0;
 	for(dp = readdir(dir); dp != NULL; dp = readdir(dir))
@@ -60,7 +52,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	printf("--- sort ---\n");
+	printf("---------File Number (after sort)---------\n");
 	for (int i = 0; i < total; i++) {
 		printf("%d\n", number[i]);
 	}
@@ -85,7 +77,6 @@ int main(int argc, char *argv[])
 	else {
 		printf("delete %04d_aaa.txt : create %04d_aaa.txt\n", number[0], number[total-1]+1);
 	}
-#endif
 
 	return 0;
 }
