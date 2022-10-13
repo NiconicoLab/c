@@ -105,7 +105,8 @@ ERet get_file(char *fname_create, char *fname_delete, const char* fix_name)
 		}
 		// printf("over = %d\n", over);
 		if(over) {
-			if(999 == number[total-1]) {
+			if((999 == number[total-1]) && ((total == over))) {
+				// printf("all over !!!\n");
 				printf("delete %04d_aaa.txt : create %04d_aaa.txt\n", number[total-over], 1);
 				sprintf(fname_delete, "%04d%s", number[total-over], fix_name);
 				sprintf(fname_create, "%04d%s", 1, fix_name);
