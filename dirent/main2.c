@@ -105,9 +105,16 @@ ERet get_file(char *fname_create, char *fname_delete, const char* fix_name)
 		}
 		// printf("over = %d\n", over);
 		if(over) {
-			printf("delete %04d_aaa.txt : create %04d_aaa.txt\n", number[total-over], number[total-over-1]+1);
-			sprintf(fname_delete, "%04d%s", number[total-over], fix_name);
-			sprintf(fname_create, "%04d%s", number[total-over-1]+1, fix_name);
+			if(999 == number[total-1]) {
+				printf("delete %04d_aaa.txt : create %04d_aaa.txt\n", number[total-over], 1);
+				sprintf(fname_delete, "%04d%s", number[total-over], fix_name);
+				sprintf(fname_create, "%04d%s", 1, fix_name);
+			}
+			else {
+				printf("delete %04d_aaa.txt : create %04d_aaa.txt\n", number[total-over], number[total-over-1]+1);
+				sprintf(fname_delete, "%04d%s", number[total-over], fix_name);
+				sprintf(fname_create, "%04d%s", number[total-over-1]+1, fix_name);
+			}
 		}
 		else {
 		}
@@ -137,7 +144,7 @@ void func1(void)
 	ERet ret = get_file(fname_create, fname_delete, fix_name);
 	switch(ret) {
 	case RET_ERROR:
-		sprintf(fname_create, "%04d%s", 0, fix_name);
+		sprintf(fname_create, "%04d%s", 1, fix_name);
 		break;
 	case RET_REPLACE:
 		delete_flag = true;
@@ -173,7 +180,7 @@ void func2(void)
 	ERet ret = get_file(fname_create, fname_delete, fix_name);
 	switch(ret) {
 	case RET_ERROR:
-		sprintf(fname_create, "%04d%s", 0, fix_name);
+		sprintf(fname_create, "%04d%s", 1, fix_name);
 		break;
 	case RET_REPLACE:
 		delete_flag = true;
