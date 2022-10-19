@@ -6,4 +6,5 @@ main2.o
 library2.o
 *.so
 library3.o
+library4.o
 .DS_Store
