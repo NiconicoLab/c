@@ -1,12 +1,12 @@
 main
 main.o
-library1.o
 main2
 main2.o
-library2.o
-*.so
 main3
 main3.o
+library1.o
+library2.o
 library3.o
 library4.o
+*.so
 .DS_Store
